@@ -6,43 +6,71 @@ using UnityEngine;
 public class Rocket : MonoBehaviour {
     bool rotatingLeft = false;
     bool rotatingRight = false;
-    public float rotateStrength = 2;
+    [SerializeField] float rcsThrust = 100f;
+    [SerializeField] float mainThrust = 100f;
+
 
     Rigidbody rigidBody;
+    AudioSource audioSource;
 
     // Use this for initialization
     void Start () {
         rigidBody = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        ProcessInput();    
+        Thrust();
+        Rotate();    
 	}
 
-    private void ProcessInput()
+    /// <summary>
+    /// OnCollisionEnter is called when this collider/rigidbody has begun
+    /// touching another rigidbody/collider.
+    /// </summary>
+    /// <param name="other">The Collision data associated with this collision.</param>
+    void OnCollisionEnter(Collision other)
     {
-        if (Input.GetKey(KeyCode.Space))
+        switch(other.gameObject.tag)
         {
-            rigidBody.AddRelativeForce(Vector3.up);
-        }
-        if (Input.GetKey(KeyCode.A) && !rotatingRight)
-        {
-            transform.Rotate(Vector3.forward * Time.deltaTime * rotateStrength);
-            rotatingLeft = true;
-        }
-        if (Input.GetKeyUp(KeyCode.A))
-        {
-            rotatingLeft = false;
-        }
-        if (Input.GetKey(KeyCode.D) && !rotatingLeft)
-        {
-            transform.Rotate(-Vector3.forward * Time.deltaTime * rotateStrength);
-            rotatingRight = true;
-        }
-        if(Input.GetKeyUp(KeyCode.D))
-        {
-            rotatingRight = false;
+            case "Friendly":
+                print("Friendly");
+                break;
+            default:
+                print("Dead"); 
+                break;
+        }  
+    }
+    private void Thrust(){
+         if (Input.GetKey(KeyCode.Space)){
+            rigidBody.AddRelativeForce(Vector3.up * mainThrust);
+            if(!audioSource.isPlaying){
+                audioSource.Play();
+            }
+        } else {
+            audioSource.Stop();
         }
     }
+     
+    private void Rotate(){
+        rigidBody.freezeRotation = true;
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A) && !rotatingRight){
+            transform.Rotate(Vector3.forward * rotationThisFrame);
+            rotatingLeft = true;
+        }
+        if (Input.GetKeyUp(KeyCode.A)){
+            rotatingLeft = false;
+        }
+        if (Input.GetKey(KeyCode.D) && !rotatingLeft){
+            transform.Rotate(-Vector3.forward *  rotationThisFrame);
+            rotatingRight = true;
+        }
+        if(Input.GetKeyUp(KeyCode.D)){
+            rotatingRight = false;
+        }
+        rigidBody.freezeRotation = false;
+    }
+
 }
