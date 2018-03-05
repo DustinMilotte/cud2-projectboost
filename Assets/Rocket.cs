@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour {
     bool rotatingLeft = false;
@@ -8,28 +9,46 @@ public class Rocket : MonoBehaviour {
     Rigidbody rigidBody;
     AudioSource audioSource;
 
-    // Use this for initialization
+    enum State {Alive, Dead, Transcending}
+    State state = State.Alive;
+
     void Start () {
         rigidBody = GetComponent<Rigidbody> ();
         audioSource = GetComponent<AudioSource> ();
     }
 
-    // Update is called once per frame
     void Update () {
-        Thrust ();
-        Rotate ();
+        if(state == State.Alive){
+            Thrust ();
+            Rotate ();
+        }
     }
-
+    
     void OnCollisionEnter (Collision other) {
+        if(state != State.Alive) { return; }
         switch (other.gameObject.tag) {
             case "Friendly":
                 print ("Friendly");
                 break;
+            case "Finish":
+                state = State.Transcending;
+                Invoke("LoadNextLevel", 1f);
+                break;
             default:
-                print ("Dead");
+                state = State.Transcending;
+                Invoke("LoadFirstLevel", 1f);
                 break;
         }
     }
+
+    private void LoadFirstLevel(){
+        SceneManager.LoadScene(0);
+    }
+
+    private void LoadNextLevel(){
+        SceneManager.LoadScene(1);
+    }
+
     private void Thrust () {
         if (Input.GetKey (KeyCode.Space)) {
             rigidBody.AddRelativeForce (Vector3.up * mainThrust);
