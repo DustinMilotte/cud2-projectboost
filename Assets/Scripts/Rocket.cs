@@ -2,8 +2,6 @@
 using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour {
-    bool rotatingLeft = false;
-    bool rotatingRight = false;
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
     [SerializeField] float levelLoadDelay = 2f;
@@ -18,7 +16,10 @@ public class Rocket : MonoBehaviour {
 
     Rigidbody rigidBody;
     AudioSource audioSource;
-
+    
+    bool rotatingLeft = false;
+    bool rotatingRight = false;
+    bool collisionsOn = true;
     enum State { Alive, Dying, Transcending }
     State state = State.Alive;
 
@@ -32,6 +33,18 @@ public class Rocket : MonoBehaviour {
             RespondToThrust();
             RespondToRotate();
         }
+        if (Debug.isDebugBuild) {
+            RespondToDebugKeys();
+        }
+    }
+
+    private void RespondToDebugKeys() {
+        if (Input.GetKey(KeyCode.L)) {
+            LoadNextLevel();
+        }
+        if (Input.GetKeyDown(KeyCode.C)) {
+            collisionsOn = !collisionsOn;
+        }
     }
 
     void OnCollisionEnter(Collision other) {
@@ -43,7 +56,9 @@ public class Rocket : MonoBehaviour {
                 StartSuccessSequence();
                 break;
             default:
-                StartDeathSequence();
+                if (collisionsOn) {
+                    StartDeathSequence();
+                }
                 break;
         }
     }
@@ -109,5 +124,4 @@ public class Rocket : MonoBehaviour {
         }
         rigidBody.freezeRotation = false;
     }
-
 }
