@@ -16,7 +16,7 @@ public class Rocket : MonoBehaviour {
 
     Rigidbody rigidBody;
     AudioSource audioSource;
-    
+
     bool rotatingLeft = false;
     bool rotatingRight = false;
     bool collisionsOn = true;
@@ -35,6 +35,46 @@ public class Rocket : MonoBehaviour {
         }
         if (Debug.isDebugBuild) {
             RespondToDebugKeys();
+        }
+    }
+
+    private void RespondToThrust() {
+        if (Input.GetKey(KeyCode.Space)) {
+            ApplyThrust();
+        } else {
+            StopApplyingThrust();
+        }
+    }
+
+    private void ApplyThrust() {
+        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
+        if (!audioSource.isPlaying) {
+            audioSource.PlayOneShot(mainEngine);
+        }
+        mainEngineParticles.Play();
+    }
+
+    private void StopApplyingThrust() {
+        audioSource.Stop();
+        mainEngineParticles.Stop();
+    }
+
+    private void RespondToRotate() {
+        rigidBody.angularVelocity = Vector3.zero;
+        float rotationThisFrame = rcsThrust * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A) && !rotatingRight) {
+            transform.Rotate(Vector3.forward * rotationThisFrame);
+            rotatingLeft = true;
+        }
+        if (Input.GetKeyUp(KeyCode.A)) {
+            rotatingLeft = false;
+        }
+        if (Input.GetKey(KeyCode.D) && !rotatingLeft) {
+            transform.Rotate(-Vector3.forward * rotationThisFrame);
+            rotatingRight = true;
+        }
+        if (Input.GetKeyUp(KeyCode.D)) {
+            rotatingRight = false;
         }
     }
 
@@ -85,43 +125,15 @@ public class Rocket : MonoBehaviour {
     }
 
     private void LoadNextLevel() {
-        SceneManager.LoadScene(1);
-    }
-
-    private void RespondToThrust() {
-        if (Input.GetKey(KeyCode.Space)) {
-            ApplyThrust();
+        int currentScene = SceneManager.GetActiveScene().buildIndex;
+        if (currentScene < (SceneManager.sceneCountInBuildSettings) - 1) {
+            SceneManager.LoadScene(currentScene + 1);
         } else {
-            audioSource.Stop();
-            mainEngineParticles.Stop();
+            SceneManager.LoadScene(0);
         }
     }
 
-    private void ApplyThrust() {
-        rigidBody.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
-        if (!audioSource.isPlaying) {
-            audioSource.PlayOneShot(mainEngine);
-        }
-        mainEngineParticles.Play();
-    }
 
-    private void RespondToRotate() {
-        rigidBody.freezeRotation = true;
-        float rotationThisFrame = rcsThrust * Time.deltaTime;
-        if (Input.GetKey(KeyCode.A) && !rotatingRight) {
-            transform.Rotate(Vector3.forward * rotationThisFrame);
-            rotatingLeft = true;
-        }
-        if (Input.GetKeyUp(KeyCode.A)) {
-            rotatingLeft = false;
-        }
-        if (Input.GetKey(KeyCode.D) && !rotatingLeft) {
-            transform.Rotate(-Vector3.forward * rotationThisFrame);
-            rotatingRight = true;
-        }
-        if (Input.GetKeyUp(KeyCode.D)) {
-            rotatingRight = false;
-        }
-        rigidBody.freezeRotation = false;
-    }
+
+
 }
