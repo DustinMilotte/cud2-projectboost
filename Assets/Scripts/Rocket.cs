@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Collections;
 
 public class Rocket : MonoBehaviour {
     [SerializeField] float rcsThrust = 100f;
@@ -10,7 +12,8 @@ public class Rocket : MonoBehaviour {
     [SerializeField] AudioClip deathSound;
     [SerializeField] AudioClip newLevelSound;
 
-    [SerializeField] ParticleSystem mainEngineParticles;
+    [SerializeField] ParticleSystem mainEngineParticlesBack;
+    [SerializeField] ParticleSystem mainEngineParticlesFront;
     [SerializeField] ParticleSystem successParticles;
     [SerializeField] ParticleSystem deathParticles;
 
@@ -22,10 +25,17 @@ public class Rocket : MonoBehaviour {
     bool collisionsOn = true;
     enum State { Alive, Dying, Transcending }
     State state = State.Alive;
+    int timer = 30;
+    public Text countdownText;
+    public Text playerCashText;
+
+    public static int playerCash = 0;
 
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
+        StartCoroutine("Countdown");
+        playerCashText.text = playerCash.ToString();
     }
 
     void Update() {
@@ -35,6 +45,14 @@ public class Rocket : MonoBehaviour {
         }
         if (Debug.isDebugBuild) {
             RespondToDebugKeys();
+        }
+        
+        countdownText.text = "due in: " + timer;
+        
+        if (timer <= 0 && state == State.Alive){
+            StopCoroutine("Countdown");
+            StartDeathSequence();
+            state = State.Transcending;
         }
     }
 
@@ -51,12 +69,14 @@ public class Rocket : MonoBehaviour {
         if (!audioSource.isPlaying) {
             audioSource.PlayOneShot(mainEngine);
         }
-        mainEngineParticles.Play();
+        mainEngineParticlesFront.Play();
+        mainEngineParticlesBack.Play();
     }
 
     private void StopApplyingThrust() {
         audioSource.Stop();
-        mainEngineParticles.Stop();
+        mainEngineParticlesBack.Stop();
+        mainEngineParticlesFront.Stop();
     }
 
     private void RespondToRotate() {
@@ -105,6 +125,8 @@ public class Rocket : MonoBehaviour {
 
     private void StartSuccessSequence() {
         state = State.Transcending;
+        StopCoroutine("Countdown");
+        playerCash += timer;
         audioSource.Stop();
         audioSource.PlayOneShot(newLevelSound);
         successParticles.Play();
@@ -133,6 +155,12 @@ public class Rocket : MonoBehaviour {
         }
     }
 
+    IEnumerator Countdown(){
+        while(true){
+            yield return new WaitForSeconds(1);
+            timer--;
+        }
+    }
 
 
 
