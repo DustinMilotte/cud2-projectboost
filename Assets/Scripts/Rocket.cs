@@ -27,15 +27,14 @@ public class Rocket : MonoBehaviour {
     State state = State.Alive;
     int timer = 30;
     public Text countdownText;
-    public Text playerCashText;
 
-    public static int playerCash = 0;
+
+    private ScoreKeeper scoreKeeper;
 
     void Start() {
         rigidBody = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
         StartCoroutine("Countdown");
-        playerCashText.text = playerCash.ToString();
     }
 
     void Update() {
@@ -126,7 +125,7 @@ public class Rocket : MonoBehaviour {
     private void StartSuccessSequence() {
         state = State.Transcending;
         StopCoroutine("Countdown");
-        playerCash += timer;
+        ScoreKeeper.score += timer;
         audioSource.Stop();
         audioSource.PlayOneShot(newLevelSound);
         successParticles.Play();
@@ -135,12 +134,12 @@ public class Rocket : MonoBehaviour {
 
     private void StartDeathSequence() {
         state = State.Dying;
+        ScoreKeeper.score = 0;
         audioSource.Stop();
         audioSource.PlayOneShot(deathSound);
         deathParticles.Play();
         Invoke("LoadFirstLevel", levelLoadDelay);
     }
-
 
     private void LoadFirstLevel() {
         SceneManager.LoadScene(0);
@@ -161,7 +160,4 @@ public class Rocket : MonoBehaviour {
             timer--;
         }
     }
-
-
-
 }
