@@ -27,8 +27,6 @@ public class Rocket : MonoBehaviour {
     State state = State.Alive;
     int timer = 30;
     public Text countdownText;
-
-
     private ScoreKeeper scoreKeeper;
 
     void Start() {

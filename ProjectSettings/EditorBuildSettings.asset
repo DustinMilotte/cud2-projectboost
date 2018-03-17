@@ -14,17 +14,23 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Levels/level 3.unity
     guid: a79359b851650496fb5df0bbfdc86558
+  - enabled: 1
+    path: Assets/Levels/level 4.unity
+    guid: 0dd7a86658892476bb74cf7bc7180b2d
+  - enabled: 1
+    path: Assets/Levels/level 5.unity
+    guid: 057e1a5ab97e540c4bece69a383467da
   - enabled: 0
-    path: Assets/__DELETED_GUID_Trash/82ec02f008ce643adb946040655fee6a
+    path: 
     guid: 82ec02f008ce643adb946040655fee6a
   - enabled: 0
-    path: Assets/__DELETED_GUID_Trash/f4957f5de3b864c51af14c8091ef9b6a
+    path: 
     guid: f4957f5de3b864c51af14c8091ef9b6a
   - enabled: 0
-    path: Assets/__DELETED_GUID_Trash/ecc1f992ea8cd41c18e5375f0a8f7bd7
+    path: 
     guid: ecc1f992ea8cd41c18e5375f0a8f7bd7
   - enabled: 0
-    path: Assets/__DELETED_GUID_Trash/57388a284f0f748a1a06d039610e0f92
+    path: 
     guid: 57388a284f0f748a1a06d039610e0f92
   - enabled: 0
     path: 
