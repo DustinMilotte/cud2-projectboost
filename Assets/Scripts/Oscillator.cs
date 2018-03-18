@@ -10,6 +10,7 @@ public class Oscillator : MonoBehaviour {
 
     void Start() {
         startingPos = transform.position;
+        period /= ScoreKeeper.speedFactor;
     }
 
     void Update() {

@@ -6,6 +6,7 @@ public class ScoreKeeper : MonoBehaviour {
 	private static ScoreKeeper instance;
 	public static int score;
 	public Text playerCashText;
+	public static float speedFactor = 1f;
 
 	private void Awake() {
 		if(instance != null && instance != this){

@@ -36,17 +36,9 @@ public class Rocket : MonoBehaviour {
     }
 
     void Update() {
-        
         if (Debug.isDebugBuild) {
             RespondToDebugKeys();
         }
-        
-        countdownText.text = "due in: " + timer;
-        
-        
-    }
-
-    void FixedUpdate() {
         if (state == State.Alive) {
             RespondToThrust();
             RespondToRotate();
@@ -55,7 +47,8 @@ public class Rocket : MonoBehaviour {
             StopCoroutine("Countdown");
             StartDeathSequence();
             state = State.Transcending;
-        }
+        } 
+        countdownText.text = "Due in: " + timer;
     }
 
     private void RespondToThrust() {
@@ -139,8 +132,10 @@ public class Rocket : MonoBehaviour {
         state = State.Dying;
         ScoreKeeper.score = 0;
         audioSource.Stop();
+        audioSource.volume = .4f;
         audioSource.PlayOneShot(deathSound);
         deathParticles.Play();
+        ScoreKeeper.speedFactor = 1f;
         Invoke("LoadFirstLevel", levelLoadDelay);
     }
 
@@ -154,6 +149,7 @@ public class Rocket : MonoBehaviour {
             SceneManager.LoadScene(currentScene + 1);
         } else {
             SceneManager.LoadScene(1);
+            ScoreKeeper.speedFactor += 0.5f;
         }
     }
 

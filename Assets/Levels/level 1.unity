@@ -1676,6 +1676,11 @@ Prefab:
       propertyPath: countdownText
       value: 
       objectReference: {fileID: 983098556}
+    - target: {fileID: 82454006503625362, guid: 1ce95087bb02b445c8b225730117e939,
+        type: 2}
+      propertyPath: m_Volume
+      value: 0.663
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1ce95087bb02b445c8b225730117e939, type: 2}
   m_IsPrefabParent: 0
